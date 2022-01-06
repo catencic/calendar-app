@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import DateTimePicker from 'react-datetime-picker';
 import Swal from 'sweetalert2';
 
 import {uiCloseModal} from '../../actions/ui';
+import { eventAddNew, eventClearActiveEvent, eventUpdated } from '../../actions/events';
 
 const customStyles = {
     content: {
@@ -27,6 +28,13 @@ const customStyles = {
 
   const nowMore = now.clone().add(1, 'hours');
 
+  const initEvents = {
+    title: '',
+    notes: '',
+    start: now.toDate(),
+    end: nowMore.toDate()
+}
+
 export const CalendarModal = () => {
 
     const [dateStart, setDateStart] = useState(now.toDate());
@@ -35,16 +43,24 @@ export const CalendarModal = () => {
 
     const dispatch = useDispatch();
     const {modalOpen} = useSelector(state => state.ui);
+    const {activeEvents} = useSelector(state => state.calendar);
+
+   
     
 
-    const [formValues, setFormValues] = useState({
-        title: 'Evento',
-        notes: '',
-        start: now.toDate(),
-        end: nowMore.toDate()
-    });
+    const [formValues, setFormValues] = useState(initEvents);
 
      const {title, notes , start, end} = formValues;
+
+     useEffect(() => {
+        
+        if(activeEvents){
+            setFormValues(activeEvents);
+        }else{
+            setFormValues(initEvents);
+        }
+         
+     }, [activeEvents, setFormValues]);
 
 
      const handleInputChange = ({target}) => {
@@ -58,6 +74,7 @@ export const CalendarModal = () => {
      const handleSubmitForm =(e)=>{
            e.preventDefault();
            
+           
            const momentStart = moment(start);
            const momentEnd = moment(end);
 
@@ -68,9 +85,25 @@ export const CalendarModal = () => {
            if(title.trim().length < 2){
                return setTitleValid(false);
            }
-           //TODO: agg en bd
+            //si el evento activo no es null es porque estoy editando un evento
+            // si es null es porque estoy creando un evento
+           if(activeEvents){
+               dispatch(eventUpdated(formValues));
+           }else{
+
+               dispatch(eventAddNew({
+                   ...formValues,
+                   id: new Date().getTime(),
+                   user: {
+                       _id: '123',
+                       name: 'Crysler'
+                   }
+               }));
+           }
+
 
            setTitleValid(true);
+           dispatch(uiCloseModal());
           
 
      }
@@ -96,8 +129,9 @@ export const CalendarModal = () => {
 
     const closeModal = () => {
         
-     
         dispatch(uiCloseModal());
+        setFormValues(initEvents);
+        dispatch(eventClearActiveEvent());
     }
 
     return (
@@ -111,7 +145,7 @@ export const CalendarModal = () => {
         overlayClassName="modal-fondo"
        
       >
-               <h1> Nuevo evento </h1>
+               <h1> { (activeEvents)? 'Editar evento': 'Nuevo evento'}</h1>
 <hr />
 <form 
  className="container"

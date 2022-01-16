@@ -126,6 +126,10 @@ export const eventStartLoading = () => {
 
 }
 
+export const EventLogout = ()=>({
+   type: types.eventLogout
+}
+)
 const eventLoaded = (events) => ({
  
     type: types.eventLoaded,

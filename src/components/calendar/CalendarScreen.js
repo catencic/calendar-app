@@ -47,8 +47,9 @@ export const CalendarScreen = () => {
 
     const onSelectEvent = (e) => {
 
-       
+        
         dispatch(eventSetActive(e));
+       
       
     }
 

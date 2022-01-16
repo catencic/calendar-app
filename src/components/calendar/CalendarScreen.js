@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../ui/Navbar'
 import moment from 'moment'
 import 'moment/locale/es'
@@ -10,7 +10,7 @@ import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
-import { eventClearActiveEvent, eventSetActive } from '../../actions/events';
+import { eventClearActiveEvent, eventSetActive, eventStartLoading } from '../../actions/events';
 import { AddNewFab } from '../ui/AddNewFab';
 import { DeleteEventFab } from '../ui/DeleteEventFab';
 
@@ -28,7 +28,14 @@ export const CalendarScreen = () => {
 
     const dispatch = useDispatch();
     const {events , activeEvents} = useSelector(state => state.calendar);
+    const {uid } = useSelector(state => state.auth);
+
+
+    useEffect(() => {
     
+        dispatch(eventStartLoading());
+        
+    }, [dispatch])
 
 
     const onDoubleClick = (e) => {
@@ -60,7 +67,7 @@ export const CalendarScreen = () => {
 
        
         const style = {
-            backgroundColor: '#367Cf7',
+            backgroundColor: (uid === event.user._id) ?  '#367Cf7' : '#465660',
             borderRadius: '0px',
             opacity: 0.8 ,
             display: 'block',

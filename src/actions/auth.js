@@ -76,6 +76,8 @@ import { types } from "../types/types";
  }
 
 
+
+
  const checkingFinish = () => ({
      type: types.authCheckingFinish
  });
@@ -87,4 +89,18 @@ import { types } from "../types/types";
     payload: user
 
  });
+
+ export const startLogout = () => {
+   return  (dispatch) => {
+
+       localStorage.clear();
+       dispatch(logout());
+
+   }
+}
+
+const logout = () => ({
+     type: types.authLogout
+})
+ 
 

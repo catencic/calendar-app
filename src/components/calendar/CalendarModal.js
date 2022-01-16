@@ -9,7 +9,7 @@ import DateTimePicker from 'react-datetime-picker';
 import Swal from 'sweetalert2';
 
 import {uiCloseModal} from '../../actions/ui';
-import {  eventClearActiveEvent, eventStartNew, eventUpdated } from '../../actions/events';
+import {  eventClearActiveEvent, eventStartNew, eventStarUpdate } from '../../actions/events';
 
 const customStyles = {
     content: {
@@ -88,7 +88,7 @@ export const CalendarModal = () => {
             //si el evento activo no es null es porque estoy editando un evento
             // si es null es porque estoy creando un evento
            if(activeEvents){
-               dispatch(eventUpdated(formValues));
+               dispatch(eventStarUpdate(formValues));
            }else{
 
                dispatch(eventStartNew(formValues));

@@ -16,7 +16,9 @@ import { types } from "../types/types";
               ...state,
               checking : false,
               ...action.payload
-          }     
+          }   
+        
+
            
     
         default:
